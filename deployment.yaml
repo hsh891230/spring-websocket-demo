@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-websocket-demo
+spec:
+  selector:
+    matchLabels:
+      app: spring-websocket-demo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: spring-websocket-demo
+    spec:
+      containers:
+      - name: spring-websocket-demo
+        image: spring-websocket-demo:0.0.1-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        resources:
+          # limits:
+            # memory: "512Mi"
+            # cpu: "500m"
+        ports:
+        - containerPort: 8080
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: production
+          - name: STOMP_RELAY_HOST
+            valueFrom:
+              secretKeyRef:
+                name: stomp
+                key: relay-host
+          - name: STOMP_RELAY_PORT
+            valueFrom:
+              secretKeyRef:
+                name: stomp
+                key: relay-port
+          - name: STOMP_SYSTEM_LOGIN
+            valueFrom:
+              secretKeyRef:
+                name: stomp
+                key: system-login
+          - name: STOMP_SYSTEM_PASSCODE
+            valueFrom:
+              secretKeyRef:
+                name: stomp
+                key: system-passcode
